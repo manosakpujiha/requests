@@ -68,8 +68,10 @@ function printResults(data) {
     }
 
     let last6 = data.next.slice(data.next.length - 6, data.next.length).replace(/=/g, " ");
+
+    const capitalized = last6.substring(0, 1).toUpperCase() + last6.substring(1);
     let pageheading = document.createElement('h3');
-        pageheading.innerText = last6;
+        pageheading.innerText = capitalized;
         pageheading.style.color = 'green';
         list.appendChild(pageheading)
 
