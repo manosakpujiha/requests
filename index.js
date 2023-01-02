@@ -63,24 +63,20 @@ function printResults(data) {
     for (let result of data.results) {
         let item = document.createElement('div');
         item.innerText = result.name;
-        list.appendChild(item)
+        list.appendChild(item);
         console.log(result.name);
     }
 
-    let last6 = data.next.slice(data.next.length - 6, data.next.length).replace(/=/g, " ");
-
-    const capitalized = last6.substring(0, 1).toUpperCase() + last6.substring(1);
-    let pageheading = document.createElement('h3');
-        pageheading.innerText = capitalized;
-        pageheading.style.color = 'green';
-        list.appendChild(pageheading)
-
+    let pageNum = data.next.slice(data.next.length - 6, data.next.length).replace(/=/g, " ");
+    let pageHeading = document.createElement('h3');
+    pageHeading.innerText = pageNum;
+    pageHeading.classList.add("underline", 'page-number-format');
+    list.appendChild(pageHeading);
     return data.next;
 }
 
 function fetchResponse(url=`https://swapi.dev/api/planets/`) {
     console.log(url);
-
     return fetch(url)
 }
 
