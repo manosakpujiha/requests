@@ -57,44 +57,45 @@ function getDataAndParse(response) {
         throw new Error(`bad request:${response.status}`);
     return response.json();
 }
-
-function printResults(data) {
-    console.log(`**********`, data);
-    for (let result of data.results) {
-        let item = document.createElement('div');
-        item.innerText = result.name;
-        list.appendChild(item);
-        console.log(result.name);
-    }
-
+function printPageNumber(data) {
     let pageNum = data.next.slice(data.next.length - 6, data.next.length).replace(/=/g, " ");
     let pageHeading = document.createElement('h3');
     pageHeading.innerText = pageNum;
     pageHeading.classList.add("underline", 'page-number-format');
     list.appendChild(pageHeading);
-    return data.next;
 }
 
-function fetchResponse(url=`https://swapi.dev/api/planets/`) {
-    console.log(url);
-    return fetch(url)
+function printResults(data) {
+    for (let result of data.results) {
+        let item = document.createElement('li');
+        item.innerText = result.name;
+        list.appendChild(item);
+    }
 }
 
-fetchResponse()
+function printResultsAndPage(data) {
+    printResults(data);
+    printPageNumber(data);
+    return Promise.resolve(data.next);
+}
+
+function fetchNextPlanets(url=`https://swapi.dev/api/planets/`) {
+    return fetch(url);
+}
+
+fetchNextPlanets()
 .then(getDataAndParse)
-.then(printResults)
-.then(fetchResponse)
+.then(printResultsAndPage)
+.then(fetchNextPlanets)
 .then(getDataAndParse)
-.then(printResults)
-.then(fetchResponse)
+.then(printResultsAndPage)
+.then(fetchNextPlanets)
 .then(getDataAndParse)
-.then(printResults)
+.then(printResultsAndPage)
 .then(() => {
-    list.removeChild(list.lastElementChild);
+    setTimeout(() =>list.removeChild(list.lastElementChild), 3000); 
 })
-.then(fetchResponse)
-.then(getDataAndParse)
 .catch((error)=> {
-    console.log(`catched error below`)
-    console.log(error)
+    console.log(`catched error below`);
+    console.log(error);
 })
