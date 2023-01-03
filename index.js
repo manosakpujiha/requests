@@ -50,6 +50,7 @@
 //         console.log('No connection');
 //     });
 
+/*****************************************  using Promises and the Fetch API (my way) ***************************************************/
 const list = document.querySelector('#list');
 
 function getDataAndParse(response) {
@@ -65,37 +66,51 @@ function printPageNumber(data) {
     list.appendChild(pageHeading);
 }
 
-function printResults(data) {
-    for (let result of data.results) {
+function printResults({results}) {
+    for (let result of results) {
         let item = document.createElement('li');
         item.innerText = result.name;
         list.appendChild(item);
     }
 }
 
-function printResultsAndPage(data) {
+function printResultsAndPage({data}) {
     printResults(data);
     printPageNumber(data);
-    return Promise.resolve(data.next);
+    return (data.next);
 }
 
 function fetchNextPlanets(url=`https://swapi.dev/api/planets/`) {
-    return fetch(url);
+    return axios.get(url);
 }
 
+// fetchNextPlanets()
+// .then(getDataAndParse)
+// .then(printResultsAndPage)
+// .then(fetchNextPlanets)
+// .then(getDataAndParse)
+// .then(printResultsAndPage)
+// .then(fetchNextPlanets)
+// .then(getDataAndParse)
+// .then(printResultsAndPage)
+// .then(() => {
+//     setTimeout(() =>list.removeChild(list.lastElementChild), 3000); 
+// })
+// .catch((error)=> {
+//     console.log(`catched error below`);
+//     console.log(error);
+// })
+
+
+/*****************************************  using Axios ***************************************************/
+
 fetchNextPlanets()
-.then(getDataAndParse)
 .then(printResultsAndPage)
 .then(fetchNextPlanets)
-.then(getDataAndParse)
 .then(printResultsAndPage)
 .then(fetchNextPlanets)
-.then(getDataAndParse)
 .then(printResultsAndPage)
-.then(() => {
-    setTimeout(() =>list.removeChild(list.lastElementChild), 3000); 
-})
 .catch((error)=> {
-    console.log(`catched error below`);
-    console.log(error);
-})
+        console.log(`catched error below`);
+        console.log(error);
+    })
