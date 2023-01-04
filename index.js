@@ -52,12 +52,17 @@
 
 /*****************************************  using Promises and the Fetch API (my way) ***************************************************/
 const list = document.querySelector('#list');
+let nextUrl = `https://swapi.dev/api/planets/`;
+let count = 0;
+let counted = 0;
+
 
 function getDataAndParse(response) {
     if (!response.ok) 
         throw new Error(`bad request:${response.status}`);
     return response.json();
 }
+
 function printPageNumber(data) {
     let pageNum = data.next.slice(data.next.length - 6, data.next.length).replace(/=/g, " ");
     let pageHeading = document.createElement('h3');
@@ -74,15 +79,42 @@ function printResults({results}) {
     }
 }
 
-function printResultsAndPage({data}) {
-    printResults(data);
-    printPageNumber(data);
-    return (data.next);
+// async function printResults({results}) {
+//       let result = results[count];
+//       console.log(result);
+//       let item = document.createElement('li');
+//       item.innerText = result.name;
+//       list.appendChild(item);
+//       counted++;
+//       return Promise.resolve(results)
+// }
+
+// setTimeout(printResults, 2000);
+
+async function printResultsAndPage({data}) {
+  
+  printResults(data)
+  printPageNumber(data);
+  return (data.next);
 }
 
 function fetchNextPlanets(url=`https://swapi.dev/api/planets/`) {
     return axios.get(url);
 }
+
+async function fetchAndDisplay() {
+  count+1 < 3 ? count++ : clearInterval(intervalId);
+    const res = await fetchNextPlanets(nextUrl)
+    nextUrl = await printResultsAndPage(res)
+    return  nextUrl;
+}
+// fetchAndDisplay()
+let intervalId =  setInterval(fetchAndDisplay, 3000); 
+// fetchAndDisplay()
+// .then(fetchAndDisplay)
+// .then(fetchAndDisplay)
+// .then(fetchAndDisplay)
+// .then(fetchAndDisplay)
 
 // fetchNextPlanets()
 // .then(getDataAndParse)
@@ -104,13 +136,67 @@ function fetchNextPlanets(url=`https://swapi.dev/api/planets/`) {
 
 /*****************************************  using Axios ***************************************************/
 
-fetchNextPlanets()
-.then(printResultsAndPage)
-.then(fetchNextPlanets)
-.then(printResultsAndPage)
-.then(fetchNextPlanets)
-.then(printResultsAndPage)
-.catch((error)=> {
-        console.log(`catched error below`);
-        console.log(error);
-    })
+// fetchNextPlanets()
+// .then(printResultsAndPage)
+// .then(fetchNextPlanets)
+// .then(printResultsAndPage)
+// .then(fetchNextPlanets)
+// .then(printResultsAndPage)
+// .catch((error)=> {
+//         console.log(`catched error below`);
+//         console.log(error);
+//     })
+
+
+/*****************************************  using async and await ***************************************************/
+// let nextUrl = `https://swapi.dev/api/planets/`
+// let count = 0;
+
+//   function displayFruit() {
+//     const fruits = [
+//         "apple", "banana", "orange", "mango", "grapes", "watermelon", "strawberry", "peach", "kiwi", "lemon",
+//         "pineapple", "papaya", "pear", "plum", "cherries", "apricot", "fig", "grapefruit", "raspberries", "blackberries"
+//       ];
+
+
+//     const list = document.getElementById("fruit-list");
+
+//     const item = document.createElement("li");
+//       item.appendChild(document.createTextNode(fruits[count]));
+//       list.appendChild(item);
+//       if (count < 19) 
+//         count++
+//       else {
+//         clearInterval(intervalId);
+//         return
+//       }
+
+//   }
+
+// let intervalId =  setInterval(displayFruit, 500); 
+
+
+/*****************************************  just some practice ***************************************************/
+
+// let nextUrl = `https://swapi.dev/api/planets/`
+// let count = 0;
+
+  function displayFruit() {
+    const fruits = [
+        "apple", "banana", "orange", "mango", "grapes", "watermelon", "strawberry", "peach", "kiwi", "lemon",
+        "pineapple", "papaya", "pear", "plum", "cherries", "apricot", "fig", "grapefruit", "raspberries", "blackberries"
+      ];
+
+    const list = document.getElementById("fruit-list");
+
+    const item = document.createElement("li");
+      item.appendChild(document.createTextNode(fruits[count]));
+      list.appendChild(item);
+      if (count+1 < 3) 
+        count++
+      else {
+        clearInterval(intervalId);
+        return
+      }
+  }
+// let intervalId =  setInterval(displayFruit, 1000); 
